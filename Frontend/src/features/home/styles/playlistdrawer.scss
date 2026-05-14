@@ -1,0 +1,342 @@
+// playlistdrawer.scss
+// Side drawer shown next to the mp3-player card
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+
+// ── Variables (kept in sync with mp3player.scss) ───────────
+$bg-card:        #0e0e12;
+$bg-surface:     #18181f;
+$bg-raised:      #222230;
+$bg-item-hover:  #1e1e2a;
+$bg-item-active: #1c1c28;
+$border-subtle:  rgba(255, 255, 255, 0.09);
+$border-strong:  rgba(255, 255, 255, 0.15);
+$accent:         #c8a97e;
+$accent-dim:     rgba(200, 169, 126, 0.12);
+$text-primary:   #ededec;
+$text-secondary: #7a7a8a;
+$text-muted:     #42424f;
+$radius-card:    18px;
+$radius-md:      10px;
+$radius-sm:      6px;
+$transition:     0.2s ease;
+
+// ── Backdrop ───────────────────────────────────────────────
+.playlist-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background 0.28s ease;
+  z-index: 10;
+
+  &--visible {
+    background: rgba(0, 0, 0, 0.55);
+    pointer-events: auto;
+  }
+}
+
+// ── Drawer ─────────────────────────────────────────────────
+// Positioned absolutely next to .mp3-player
+.playlist-drawer {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 18px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  width: min(340px, calc(100vw - 32px));
+  height: 100%;
+  background: $bg-card;
+  border: 1px solid $border-strong;
+  border-radius: $radius-card;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35);
+  transform: translateX(18px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'DM Mono', monospace;
+  overflow: hidden;
+
+  &--open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  // ── Header ───────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px 14px;
+    flex-shrink: 0;
+  }
+
+  &__heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__emoji {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__mood-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-primary;
+    margin: 0 0 2px;
+    letter-spacing: 0.02em;
+  }
+
+  &__count {
+    font-size: 10px;
+    color: $text-muted;
+    margin: 0;
+    letter-spacing: 0.05em;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $text-secondary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+    transition: color $transition, background $transition;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    &:hover {
+      color: $text-primary;
+      background: $bg-raised;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+
+  // ── Divider ───────────────────────────────────────────────
+  &__divider {
+    height: 1px;
+    background: $border-subtle;
+    flex-shrink: 0;
+    margin: 0 18px;
+  }
+
+  // ── Song List ─────────────────────────────────────────────
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0 12px;
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: $bg-raised transparent;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $bg-raised;
+      border-radius: 2px;
+    }
+  }
+
+  // ── Empty State ───────────────────────────────────────────
+  &__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    font-size: 11px;
+    color: $text-muted;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  // ── Individual Item ───────────────────────────────────────
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 0;
+    transition: background $transition;
+
+    // hide play hint by default
+    .playlist-drawer__play-hint {
+      opacity: 0;
+      transition: opacity $transition;
+    }
+
+    &:hover {
+      background: $bg-item-hover;
+
+      .playlist-drawer__play-hint { opacity: 1; }
+      .playlist-drawer__num       { opacity: 0; }
+    }
+
+    &--active {
+      background: $bg-item-active;
+
+      .playlist-drawer__item-title  { color: $accent; }
+      .playlist-drawer__index       { color: $accent; }
+    }
+  }
+
+  // ── Index / Bars ──────────────────────────────────────────
+  &__index {
+    width: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-muted;
+    position: relative;
+  }
+
+  &__num {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    transition: opacity $transition;
+  }
+
+  // Animated equaliser bars for active track
+  &__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+
+    span {
+      display: block;
+      width: 3px;
+      border-radius: 1px;
+      background: $accent;
+      animation: barBounce 0.9s ease-in-out infinite alternate;
+
+      &:nth-child(1) { height: 6px;  animation-delay: 0s;     }
+      &:nth-child(2) { height: 12px; animation-delay: 0.2s;   }
+      &:nth-child(3) { height: 8px;  animation-delay: 0.1s;   }
+    }
+  }
+
+  // ── Cover Art ─────────────────────────────────────────────
+  &__cover {
+    width: 38px;
+    height: 38px;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid $border-subtle;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  &__cover-fallback {
+    width: 100%;
+    height: 100%;
+    background: $bg-surface;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-muted;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  // ── Track Info ────────────────────────────────────────────
+  &__item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__item-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color $transition;
+    letter-spacing: 0.02em;
+  }
+
+  &__item-artist {
+    font-size: 10px;
+    color: $text-secondary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.03em;
+  }
+
+  // ── Hover Play Icon ───────────────────────────────────────
+  &__play-hint {
+    flex-shrink: 0;
+    color: $text-secondary;
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+  }
+}
+
+// ── Keyframes ──────────────────────────────────────────────
+@keyframes barBounce {
+  from { transform: scaleY(0.4); }
+  to   { transform: scaleY(1);   }
+}
+
+@media (max-width: 860px) {
+  .playlist-drawer {
+    top: calc(100% + 14px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 360px;
+    transform: translateY(14px);
+
+    &--open {
+      transform: translateY(0);
+    }
+  }
+}

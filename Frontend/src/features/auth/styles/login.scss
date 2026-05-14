@@ -1,0 +1,240 @@
+// ── Tokens ──────────────────────────────────────────────────────────────────
+$bg: #fafafa;
+$surface: #ffffff;
+$border: #dbdbdb;
+$border-focus: #a8a8a8;
+$text-primary: #262626;
+$text-secondary: #737373;
+$brand: #0095f6;
+$brand-hover: #1877f2;
+$brand-disabled: #b2dffc;
+$radius-card: 12px;
+$radius-input: 6px;
+$font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+// ── Reset ────────────────────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// ── Page shell ───────────────────────────────────────────────────────────────
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $bg;
+  font-family: $font;
+  padding: 16px;
+}
+
+// ── Card ─────────────────────────────────────────────────────────────────────
+.login-card {
+  width: 100%;
+  max-width: 350px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  padding: 40px 40px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+
+  @media (max-width: 480px) {
+    border: none;
+    padding: 32px 20px 24px;
+    border-radius: 0;
+    background: transparent;
+  }
+}
+
+// ── Brand ────────────────────────────────────────────────────────────────────
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+
+
+
+  &__name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: $text-primary;
+    font-style: italic;
+    margin-bottom: 1.2rem;
+  }
+}
+
+
+// ── Form ─────────────────────────────────────────────────────────────────────
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  // Floating-label field
+  &__field {
+    position: relative;
+
+    input {
+      width: 100%;
+      height: 44px;
+      padding: 14px 12px 2px;
+      border: 1px solid $border;
+      border-radius: $radius-input;
+      background: #fafafa;
+      font-family: $font;
+      font-size: 13px;
+      color: $text-primary;
+      outline: none;
+      transition: border-color 0.15s ease;
+
+      &:focus {
+        border-color: $border-focus;
+        background: #fff;
+      }
+
+      // When field has content or is focused, shrink label
+      &:focus ~ label,
+      &:not(:placeholder-shown) ~ label {
+        top: 6px;
+        font-size: 10px;
+        color: $text-secondary;
+      }
+    }
+
+    label {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: $text-secondary;
+      pointer-events: none;
+      transition: top 0.15s ease, font-size 0.15s ease, color 0.15s ease;
+    }
+
+    // Password field needs room for "Show" button
+    &--password input {
+      padding-right: 52px;
+    }
+  }
+
+  // Show / Hide toggle
+  &__toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-family: $font;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-primary;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+
+    &:hover {
+      color: $text-secondary;
+    }
+  }
+
+  // Submit button
+  &__submit {
+    margin-top: 8px;
+    width: 100%;
+    height: 40px;
+    background: $brand;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: $font;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+      background: $brand-hover;
+    }
+
+    &:disabled {
+      background: $brand-disabled;
+      cursor: default;
+    }
+
+    &--loading {
+      cursor: default;
+    }
+  }
+}
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Divider ───────────────────────────────────────────────────────────────────
+.login-divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0 16px;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: $border;
+  }
+
+  span {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: $text-secondary;
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.login-footer {
+  font-size: 13px;
+  color: $text-secondary;
+  text-align: center;
+
+  a {
+    color: $text-primary;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

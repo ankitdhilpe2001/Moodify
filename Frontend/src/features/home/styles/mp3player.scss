@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Mono:wght@400;500&display=swap');
+
+$bg-card: #111118;
+$bg-surface: #1a1a24;
+$bg-raised: #22222f;
+$accent: #e8a455;
+$accent-dim: rgba(232, 164, 85, 0.18);
+$text-primary: #f0ede8;
+$text-secondary: #8a8799;
+$text-muted: #504f60;
+$border: rgba(255, 255, 255, 0.07);
+$radius-card: 20px;
+$radius-pill: 100px;
+$transition: 0.18s ease;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $text-secondary;
+  @include flex-center;
+  border-radius: 50%;
+  padding: 8px;
+  transition: color $transition, background $transition, transform 0.1s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+
+  &:hover {
+    color: $text-primary;
+    background: $bg-raised;
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+@mixin range-track {
+  height: 3px;
+  border-radius: $radius-pill;
+  background: $bg-raised;
+  border: none;
+}
+
+@mixin range-thumb {
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: $text-primary;
+  cursor: pointer;
+  border: none;
+  margin-top: -5px;
+  transition: transform 0.12s ease, background $transition;
+
+  &:hover {
+    transform: scale(1.25);
+    background: $accent;
+  }
+}
+
+@keyframes vinylSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(232, 164, 85, 0.3); }
+  70% { box-shadow: 0 0 0 10px rgba(232, 164, 85, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(232, 164, 85, 0); }
+}
+
+.mp3-player {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+  width: 100%;
+  max-width: 360px;
+  margin: 24px auto 0;
+  padding: 2rem 1.75rem 1.75rem;
+  background: $bg-card;
+  border-radius: $radius-card;
+  border: 1px solid $border;
+  animation: fadeSlideUp 0.4s ease both;
+  overflow: visible;
+
+  &__mood-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $accent;
+    background: $accent-dim;
+    padding: 5px 14px;
+    border-radius: $radius-pill;
+    margin-bottom: 1.5rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  &__mood-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $accent;
+    animation: pulse-ring 2s infinite;
+  }
+
+  &__artwork {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 1.75rem;
+    border: 3px solid $bg-raised;
+    position: relative;
+    flex-shrink: 0;
+
+    &--spinning {
+      animation: vinylSpin 8s linear infinite;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
+  &__artwork-placeholder {
+    width: 100%;
+    height: 100%;
+    background: $bg-surface;
+    @include flex-center;
+    position: relative;
+    border-radius: 50%;
+  }
+
+  &__artwork-rings {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:nth-child(1) { width: 72px; height: 72px; }
+    &:nth-child(2) { width: 116px; height: 116px; }
+    &:nth-child(3) { width: 155px; height: 155px; }
+  }
+
+  &__artwork-hole {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: $bg-card;
+    border: 2px solid $bg-raised;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__info {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+
+  &__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__artist {
+    font-size: 12px;
+    color: $text-secondary;
+    margin: 0;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__progress-area {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  &__times {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: $text-muted;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  &__progress-bar,
+  &__volume-bar {
+    appearance: none;
+    -webkit-appearance: none;
+    height: 3px;
+    border-radius: $radius-pill;
+    background: $bg-raised;
+    outline: none;
+    cursor: pointer;
+
+    &::-webkit-slider-runnable-track { @include range-track; }
+    &::-moz-range-track { @include range-track; }
+    &::-webkit-slider-thumb { @include range-thumb; }
+    &::-moz-range-thumb { @include range-thumb; }
+  }
+
+  &__progress-bar {
+    width: 100%;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 1.5rem;
+  }
+
+  &__ctrl-btn {
+    @include icon-btn;
+
+    &--active {
+      color: $accent;
+
+      &:hover {
+        color: $accent;
+        background: $accent-dim;
+      }
+    }
+  }
+
+  &__repeat-btn {
+    position: relative;
+  }
+
+  &__repeat-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 8px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    color: $accent;
+    line-height: 1;
+  }
+
+  &__play-btn {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: $text-primary;
+    color: $bg-card;
+    border: none;
+    cursor: pointer;
+    @include flex-center;
+    margin: 0 6px;
+    flex-shrink: 0;
+    transition: opacity $transition, transform 0.1s ease, background $transition;
+
+    svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+    }
+
+    &:hover {
+      background: $accent;
+      opacity: 1;
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+
+  &__volume {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  &__vol-step {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $text-secondary;
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    line-height: 1;
+    padding: 4px;
+    transition: color $transition, transform 0.1s ease;
+
+    &:hover {
+      color: $text-primary;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+
+  &__vol-icon {
+    @include icon-btn;
+    padding: 4px;
+    flex-shrink: 0;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &__volume-bar {
+    flex: 1;
+  }
+}
