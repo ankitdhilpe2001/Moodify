@@ -7,9 +7,9 @@ import { useSong } from "../../home/hook/useSong";
 const getMoodFromExpression = (label) => {
   const expression = label.toLowerCase();
 
-  if (expression.includes("happy")) return "happy";
-  if (expression.includes("sad")) return "sad";
-  if (expression.includes("surprise")) return "surprised";
+  if (expression.includes("happy")) return "Happy";
+  if (expression.includes("sad")) return "Sad";
+  if (expression.includes("surprise")) return "Surprised";
 
   return "neutral";
 };

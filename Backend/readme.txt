@@ -75,7 +75,7 @@ npm install
 
 Create a `.env` file in the `Backend/` directory:
 ```env
-PORT=5000
+PORT=8080
 MONGO_URI=your_mongodb_connection_string
 SECRET_KEY=your_jwt_secret_key
 REDIS_HOST=your_redis_host
@@ -86,7 +86,7 @@ IMAGE_KIT_KEY=your_imagekit_private_key
 
 Create a `.env` file in the `Frontend/` directory:
 ```env
-VITE_API_BASE_URL=http://localhost:5000
+VITE_BACKEND_URL=http://localhost:8080
 ```
 
 **4. Run the app**

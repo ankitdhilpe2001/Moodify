@@ -2,46 +2,46 @@ const Song = require("../models/Song");
 const nodeid3 = require("node-id3");
 const storageService = require("../services/storage.services");
 
-const escapeRegex = (value) => {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-};
-
 // To upload the song in imagekit and save in DB
 async function uploadSong(req, res) {
-  const songBuffer = req.file.buffer; //Get the buffer
-  const { mood } = req.body; //The mood from request body
-  const tags = nodeid3.read(req.file.buffer); //Read the tags from the bufffer
-  const baseFilename =
-    tags?.title ||
-    req.file?.originalname?.replace(/\.[^/.]+$/, "") ||
-    `song-${Date.now()}`;
+  try {
+    const songBuffer = req.file.buffer; //Get the buffer
+    const { mood } = req.body; //The mood from request body
+    const tags = nodeid3.read(req.file.buffer); //Read the tags from the bufffer
+    const baseFilename =
+      tags?.title ||
+      req.file?.originalname?.replace(/\.[^/.]+$/, "") ||
+      `song-${Date.now()}`;
 
-  // Upload song and poster in parallel
-  const [songFile, posterFile] = await Promise.all([
-    storageService.uploadFile({
-      buffer: songBuffer,
-      filename: `${baseFilename}.mp3`,
-      folder: "/cohort-2/moodify/songs",
-    }),
-    storageService.uploadFile({
-      buffer: tags.image.imageBuffer,
-      filename: `${baseFilename}.jpeg`,
-      folder: "/cohort-2/moodify/posters",
-    }),
-  ]);
-  //The songFile was getting uploaded to ImageKit
-  // converted that block to Promise.all so songFile and posterFile upload concurrently in song.controller.js.
+    // Upload song and poster in parallel
+    const [songFile, posterFile] = await Promise.all([
+      storageService.uploadFile({
+        buffer: songBuffer,
+        filename: `${baseFilename}.mp3`,
+        folder: "/cohort-2/moodify/songs",
+      }),
+      storageService.uploadFile({
+        buffer: tags.image.imageBuffer,
+        filename: `${baseFilename}.jpeg`,
+        folder: "/cohort-2/moodify/posters",
+      }),
+    ]);
+    //The songFile was getting uploaded to ImageKit
+    // converted that block to Promise.all so songFile and posterFile upload concurrently in song.controller.js.
 
-  //Creating songs in DB
-  const song = await Song.create({
-    url: songFile.url,
-    posterUrl: posterFile.url,
-    title: baseFilename,
-    singer: tags.artist,
-    mood: mood,
-  });
+    //Creating songs in DB
+    const song = await Song.create({
+      url: songFile.url,
+      posterUrl: posterFile.url,
+      title: baseFilename,
+      singer: tags.artist,
+      mood: mood,
+    });
 
-  return res.status(201).json({ message: "Song created", song });
+    return res.status(201).json({ message: "Song created", song });
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 async function getSongs(req, res) {
@@ -52,14 +52,7 @@ async function getSongs(req, res) {
   }
 
   const songs = await Song.aggregate([
-    {
-      $match: {
-        mood: {
-          $regex: `^${escapeRegex(mood)}$`,
-          $options: "i",
-        },
-      },
-    },
+    { $match: { mood } },
     { $sample: { size: 1 } },
   ]);
 
@@ -80,12 +73,7 @@ async function getSongPlaylist(req, res) {
     return res.status(400).json({ message: "Mood is required" });
   }
 
-  const songPlaylist = await Song.find({
-    mood: {
-      $regex: `^${escapeRegex(mood)}$`,
-      $options: "i",
-    },
-  })
+  const songPlaylist = await Song.find({ mood })
     .limit(Number(limit))
     .lean();
 

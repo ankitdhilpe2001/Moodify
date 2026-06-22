@@ -1,6 +1,11 @@
 const jwt = require("jsonwebtoken");
 const redis = require("../config/cache");
 
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: "lax",
+};
+
 async function authenticateUser(req, res, next) {
   const token = req.cookies.token;
 
@@ -8,18 +13,30 @@ async function authenticateUser(req, res, next) {
     return res.status(400).json({ message: "Token not provided" });
   }
 
-  const isTokenBlacklisted = await redis.get(`blacklist:${token}`);
-
-  if (isTokenBlacklisted) {
-    return res.status(401).json({ message: "Unauthorized access" });
+  if (!process.env.SECRET_KEY) {
+    console.error("SECRET_KEY is not configured");
+    return res.status(500).json({ message: "Server configuration error" });
   }
 
   try {
+    let isTokenBlacklisted = null;
+
+    try {
+      isTokenBlacklisted = await redis.get(`blacklist:${token}`);
+    } catch (redisError) {
+      console.error("Redis blacklist check failed:", redisError.message);
+    }
+
+    if (isTokenBlacklisted) {
+      return res.status(401).json({ message: "Unauthorized access" });
+    }
+
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     req.user = decoded;
     next();
   } catch (error) {
-    console.log(error);
+    console.error("Auth error:", error.message);
+    res.clearCookie("token", cookieOptions);
     return res.status(401).json({ message: "Invalid token" });
   }
 }

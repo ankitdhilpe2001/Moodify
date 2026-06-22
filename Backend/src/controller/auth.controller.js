@@ -34,7 +34,11 @@ async function handleRegister(req, res) {
       expiresIn: "1d",
     });
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     return res.status(201).json({
       message: "User registered successfully",
@@ -130,7 +134,7 @@ async function handleLogout(req, res) {
 
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false,
+    secure: true,
     sameSite: "strict",
   });
 
