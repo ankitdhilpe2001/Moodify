@@ -86,7 +86,7 @@ IMAGE_KIT_KEY=your_imagekit_private_key
 
 Create a `.env` file in the `Frontend/` directory:
 ```env
-VITE_API_BASE_URL=http://localhost:5000
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 **4. Run the app**
