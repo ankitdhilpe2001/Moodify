@@ -3,6 +3,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const redis = require("../config/cache");
 
+const authCookieOptions = {
+  httpOnly: true,
+  sameSite: "none",
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 24 * 60 * 60 * 1000,
+  path: "/",
+};
+
 async function handleRegister(req, res) {
   try {
     const { username, email, password } = req.body;
@@ -34,11 +42,7 @@ async function handleRegister(req, res) {
       expiresIn: "1d",
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    res.cookie("token", token, authCookieOptions);
 
     return res.status(201).json({
       message: "User registered successfully",
@@ -83,11 +87,7 @@ async function handleLogin(req, res) {
       expiresIn: "1d",
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    res.cookie("token", token, authCookieOptions);
 
     const userData = userExist.toObject();
     delete userData.password;
@@ -133,9 +133,8 @@ async function handleLogout(req, res) {
   }
 
   res.clearCookie("token", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+    ...authCookieOptions,
+    maxAge: 0,
   });
 
   return res.status(200).json({ message: "Logout successful" });

@@ -4,7 +4,7 @@ import {
   getmeHandler,
   logoutHandler,
 } from "../services/auth.api";
-import { useContext } from "react";
+import { useContext, useCallback } from "react";
 import { AuthContext } from "../auth.context";
 
 export const useAuth = () => {
@@ -45,7 +45,7 @@ export const useAuth = () => {
     }
   };
 
-  const handleGetMe = async () => {
+  const handleGetMe = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getmeHandler();
@@ -58,7 +58,11 @@ export const useAuth = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setUser]);
+
+  // useEffect(() => {
+  //   handleGetMe();
+  // }, [handleGetMe]);
 
   const handleLogout = async () => {
     try {

@@ -3,7 +3,9 @@ const redis = require("../config/cache");
 
 const cookieOptions = {
   httpOnly: true,
-  sameSite: "lax",
+  sameSite: "none",
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
 };
 
 async function authenticateUser(req, res, next) {
