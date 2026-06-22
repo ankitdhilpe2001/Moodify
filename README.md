@@ -12,6 +12,9 @@ Built as a personal portfolio project to explore the intersection of computer vi
 
 ---
 
+## Live Link
+(https://moodify-delta-jet.vercel.app/)
+
 ## ✨ Features
 
 - 🎭 **Real-time face detection** — detects your mood live through your camera using MediaPipe Task Vision
