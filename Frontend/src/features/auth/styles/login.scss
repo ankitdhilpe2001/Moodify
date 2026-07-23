@@ -194,6 +194,13 @@ $font: "Helvetica Neue", Helvetica, Arial, sans-serif;
   animation: spin 0.7s linear infinite;
 }
 
+.spinner--dark {
+  width: 24px;
+  height: 24px;
+  border-color: rgba(38, 38, 38, 0.18);
+  border-top-color: $text-primary;
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
