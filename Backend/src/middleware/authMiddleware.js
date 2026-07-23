@@ -1,10 +1,12 @@
 const jwt = require("jsonwebtoken");
 const redis = require("../config/cache");
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const cookieOptions = {
   httpOnly: true,
-  sameSite: "none",
-  secure: process.env.NODE_ENV === "production",
+  sameSite: isProduction ? "none" : "lax",
+  secure: isProduction,
   path: "/",
 };
 
